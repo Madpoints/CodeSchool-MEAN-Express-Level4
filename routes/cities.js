@@ -9,8 +9,6 @@ var parseUrlencoded = bodyParser.urlencoded({ extended: false});
 var cities = {
     'Providence': 'Rhode Island',
     'Boston': 'Massachusetts',
-    'New York': 'New York',
-    'Silicon City': 'Silicon Road',
     'Bristol': 'Rhode Island, East Bay'
 };
 
@@ -18,7 +16,7 @@ var cities = {
 // app.use('/blocks') in middleware.js
 router.route('/')
     .get(function(request, response) { // lines with a dot indicate function calls
-        var cities = ['Providence', 'Boston', 'New York', 'Silicon City', 'Bristol'];
+        var cities = ['Providence', 'Boston', 'Bristol'];
         // query string param to limit number of blocks returned
         if (request.query.limit >= 0) {
             response.json(cities.slice(0, request.query.limit));
@@ -29,7 +27,7 @@ router.route('/')
     .post(parseUrlencoded, function(request, response) {
         var newCity = request.body;
         cities[newCity.name] = newCity.location;
-    
+        console.log(cities);
         // Sets 201 created status, repsonse with new block name
         response.status(201).json(newCity.name);
     });
@@ -41,8 +39,8 @@ router.route('/:name')
 // .all operates the same as app.param
     .all(function(request, response, next) {
         var name = request.params.name;
-        var city = name[0].toUpperCase() + name.slice(1).toLowerCase();
-        request.cityName = city;
+        
+        request.cityName = name;
         next();
     })
     .get(function(request, response) {
